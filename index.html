@@ -3,74 +3,8 @@
 <head>
 	<title></title>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-	<style>
-		body {
-			background-color: rgb(82, 86, 89);
-		}
-
-		canvas, .canvas-container {
-			-webkit-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-			-moz-box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-			box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);
-			margin-bottom: 25px;
-		}
-
-		.toolbar {
-			width: 100%;
-			background-color: rgb(50, 54, 57);
-			height: 50px;
-			position: fixed;
-			top: 0;
-			left: 0;
-			z-index: 10;
-		}
-
-		#pdf-container {
-			margin-top: 60px;
-			padding-left: 10px;
-		}
-
-		.toolbar .tool {
-			display: inline-block;
-			color: #fff;
-			height: 100%;
-			padding-top: 10px;
-			padding-left: 10px;
-			margin-right: 5px;
-		}
-
-		.toolbar .tool .color-tool {
-			height: 25px;
-			width: 25px;
-			border-radius: 25px;
-			border: 1px solid #fff;
-			cursor: pointer;
-			display: inline-block;
-		}
-
-		.toolbar .tool .color-tool.active {
-			-webkit-box-shadow: 3px 4px 5px 0px rgba(0,0,0,0.75);
-			-moz-box-shadow: 3px 4px 5px 0px rgba(0,0,0,0.75);
-			box-shadow: 3px 4px 5px 0px rgba(0,0,0,0.75);
-		}
-
-		.toolbar .tool:nth-last-child(1) {
-			float: right;
-		}
-
-		.toolbar .tool .tool-button {
-			background-color: rgb(50, 54, 57);
-			border: 1px solid rgb(50, 54, 57);
-			color: #fff;
-			cursor: pointer;
-		}
-
-		.toolbar .tool .tool-button:hover,
-		.toolbar .tool .tool-button.active {
-			background-color: rgb(82, 86, 89);
-			border-color: rgb(82, 86, 89);
-		}
-	</style>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<link rel="stylesheet" href="./styles.css">
 </head>
 <body>
 <div class="toolbar">
@@ -79,7 +13,22 @@
 	</div>
 	<div class="tool">
 		<label for="">Brush size</label>
-		<input type="number" class="from-control text-right" value="1" id="brush-size">
+		<input type="number" class="form-control text-right" value="1" id="brush-size" max="50">
+	</div>
+	<div class="tool">
+		<label for="">Font size</label>
+		<select id="font-size" class="form-control">
+			<option value="10">10</option>
+			<option value="12">12</option>
+			<option value="16" selected>16</option>
+			<option value="18">18</option>
+			<option value="24">24</option>
+			<option value="32">32</option>
+			<option value="48">48</option>
+			<option value="64">64</option>
+			<option value="72">72</option>
+			<option value="108">108</option>
+		</select>
 	</div>
 	<div class="tool">
 		<button class="color-tool active" style="background-color: #212121;"></button>
@@ -89,148 +38,32 @@
 		<button class="color-tool" style="background-color: yellow;"></button>
 	</div>
 	<div class="tool">
-		<button class="tool-button active"><i class="fas fa-pencil-alt" title="Free Hand" onclick="enableFreeHand(event)"></i></button>
+		<button class="tool-button"><i class="fa fa-hand-paper-o" title="Free Hand" onclick="enableSelector(event)"></i></button>
 	</div>
 	<div class="tool">
-		<button class="tool-button"><i class="fas fa-font" title="Add Text" onclick="enableAddText(event)"></i></button>
+		<button class="tool-button"><i class="fa fa-pencil" title="Pencil" onclick="enablePencil(event)"></i></button>
 	</div>
 	<div class="tool">
-		<button class="tool-button"><i class="fas fa-arrow-right" title="Add Arrow" onclick="enableAddArrow(event)"></i></button>
+		<button class="tool-button"><i class="fa fa-font" title="Add Text" onclick="enableAddText(event)"></i></button>
 	</div>
 	<div class="tool">
-		<button class="btn btn-light btn-sm"><i class="far fa-save"></i> Save</button>
+		<button class="tool-button"><i class="fa fa-long-arrow-right" title="Add Arrow" onclick="enableAddArrow(event)"></i></button>
+	</div>
+	<div class="tool">
+		<button class="btn btn-danger btn-sm" onclick="deleteSelectedObject(event)"><i class="fa fa-trash"></i></button>
+	</div>
+	<div class="tool">
+		<button class="btn btn-danger btn-sm" id="clear-page">Clear Page 1</button>
+	</div>
+	<div class="tool">
+		<button class="btn btn-light btn-sm"><i class="fa fa-save"></i> Save</button>
 	</div>
 </div>
 <div id="pdf-container"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.328/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.22/fabric.min.js"></script>
-<script defer src="https://use.fontawesome.com/releases/v5.0.6/js/all.js"></script>
-<script>
-	var url = "http://pdftest.test/pdf.pdf";
-	var number_of_pages = 0;
-	var pages_rendered = 0;
-	var active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
-	var fabricObjects = [];
-	var color = '#212121';
-
-	var loadingTask = PDFJS.getDocument(url);
-	loadingTask.promise.then(function (pdf) {
-		var scale = 1.5;
-		number_of_pages = pdf.pdfInfo.numPages;
-		for (var i = 1; i <= pdf.pdfInfo.numPages; i++) {
-			pdf.getPage(i).then(function (page) {
-				var viewport = page.getViewport(scale);
-				var canvas = document.createElement('canvas');
-				document.getElementById('pdf-container').appendChild(canvas);
-				canvas.className = 'pdf-canvas';
-				canvas.height = viewport.height;
-				canvas.width = viewport.width;
-				context = canvas.getContext('2d');
-
-				var renderContext = {
-					canvasContext: context,
-					viewport: viewport
-				};
-				var renderTask = page.render(renderContext);
-				renderTask.then(function () {
-					$('.pdf-canvas').each(function (index, el) {
-						$(el).attr('id', 'page-' + (index + 1) + '-canvas');
-					});
-					pages_rendered++;
-					if (pages_rendered == number_of_pages) initFabric();
-				});
-			});
-		}
-	}, function (reason) {
-  		console.error(reason);
-	});
-
-	function initFabric() {
-		$('canvas').each(function (index, el) {
-			var background = el.toDataURL("image/png");
-			var fabricObj = new fabric.Canvas(el.id, {
-				isDrawingMode: true,
-				freeDrawingBrush: {
-					width: 1,
-					color: color
-				}
-			});
-			fabricObjects.push(fabricObj);
-			fabricObj.setBackgroundImage(background, fabricObj.renderAll.bind(fabricObj));
-			$(fabricObj.upperCanvasEl).click(function () {
-				fabricClickHandler(fabricObj);
-			});
-		});
-	}
-
-	function fabricClickHandler(fabricObj) {
-		if (active_tool == 2) {
-			var text = new fabric.IText('Sample text', {
-				left: 100,
-				top: 100,
-				fill: color,
-				selectable: true
-			});
-			fabricObj.add(text);
-			active_tool = 0;
-			$('.tool-button.active').removeClass('active');
-		}
-	}
-
-	function enableFreeHand(event) {
-		var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-		$('.tool-button.active').removeClass('active');
-		$(element).addClass('active');
-		active_tool = 1;
-		if (fabricObjects.length > 0) {
-			$.each(fabricObjects, function (index, fabricObj) {
-				fabricObj.isDrawingMode = true;
-			});
-		}
-	}
-
-	function enableAddText(event) {
-		var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-		$('.tool-button.active').removeClass('active');
-		$(element).addClass('active');
-		active_tool = 2;
-		if (fabricObjects.length > 0) {
-			$.each(fabricObjects, function (index, fabricObj) {
-				fabricObj.isDrawingMode = false;
-			});
-		}
-	}
-
-	function enableAddArrow(event) {
-		var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-		$('.tool-button.active').removeClass('active');
-		$(element).addClass('active');
-		active_tool = 3;
-		if (fabricObjects.length > 0) {
-			$.each(fabricObjects, function (index, fabricObj) {
-				fabricObj.isDrawingMode = false;
-			});
-		}
-	}
-
-	$(function () {
-		$('.color-tool').click(function () {
-			$('.color-tool.active').removeClass('active');
-			$(this).addClass('active');
-			color = $(this).get(0).style.backgroundColor;
-			$.each(fabricObjects, function (index, fabricObj) {
-				fabricObj.freeDrawingBrush.color = color;
-			});
-		});
-
-		$('#brush-size').change(function () {
-			var width = $(this).val();
-			$.each(fabricObjects, function (index, fabricObj) {
-				fabricObj.freeDrawingBrush.width = width;
-			});
-		});
-	});
-</script>
+<script src="./arrow.fabric.js"></script>
+<script src="./script.js"></script>
 </body>
 </html>
