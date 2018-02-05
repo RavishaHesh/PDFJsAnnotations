@@ -9,6 +9,10 @@ canvas, .canvas-container {
     margin-bottom: 25px;
 }
 
+.canvas-container {
+    margin: 0 auto;
+}
+
 .toolbar {
     width: 100%;
     background-color: rgb(50, 54, 57);

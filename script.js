@@ -55,19 +55,19 @@ function initFabric() {
         });
         fabricObjects.push(fabricObj);
         fabricObj.setBackgroundImage(background, fabricObj.renderAll.bind(fabricObj));
-        $(fabricObj.upperCanvasEl).click(function () {
+        $(fabricObj.upperCanvasEl).click(function (event) {
             active_canvas = index;
             $('#clear-page').text('Clear Page ' + (index + 1));
-            fabricClickHandler(fabricObj);
+            fabricClickHandler(event, fabricObj);
         });
     });
 }
 
-function fabricClickHandler(fabricObj) {
+function fabricClickHandler(event, fabricObj) {
     if (active_tool == 2) {
         var text = new fabric.IText('Sample text', {
-            left: 100,
-            top: 100,
+            left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
+            top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top,
             fill: color,
             fontSize: font_size,
             selectable: true

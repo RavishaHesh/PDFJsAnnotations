@@ -1,3 +1,7 @@
+/**
+ * From: https://blog.thirdrocktechkno.com/how-to-draw-an-arrow-using-html-5-canvas-and-fabricjs-9500c3f50ecb
+ */
+
 // Extended fabric line class
 fabric.LineArrow = fabric.util.createClass(fabric.Line, {
 
@@ -72,13 +76,18 @@ var Arrow = (function() {
     })
   }
 
-  Arrow.prototype.onMouseUp = function(o) {
+  Arrow.prototype.unBindEventes = function () {
     var inst = this;
-    inst.disable();
     inst.canvas.off('mouse:down');
     inst.canvas.off('mouse:up');
     inst.canvas.off('mouse:move');
     inst.canvas.off('object:moving');
+  }
+
+  Arrow.prototype.onMouseUp = function(o) {
+    var inst = this;
+    inst.disable();
+    inst.unBindEventes();
     if (inst.callback) inst.callback();
   };
 
@@ -111,7 +120,7 @@ var Arrow = (function() {
       originX: 'center',
       originY: 'center',
       hasBorders: false,
-      hasControls: false,
+      hasControls: true,
       selectable: true
     });
     
