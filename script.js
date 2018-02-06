@@ -149,8 +149,11 @@ function savePDF() {
     $.each(fabricObjects, function (index, fabricObj) {
         doc.addPage();
         doc.setPage(index);
-        images.push(fabricObj.Canvas.toDataURL('png'));
+        var image = fabricObj.toDataURL('png');
+        console.log(image);
+        doc.addImage(image, 'png', 0, 0);
     });
+    doc.save('sample.pdf');    
 }
 
 $(function () {
