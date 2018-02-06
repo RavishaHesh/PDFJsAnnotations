@@ -27,3 +27,31 @@
 - Clear page
 
 - Export PDF with annotations (using jsPDF)
+
+# Usage 
+
+```javascript
+var pdf = new PDFAnnotate('pdf-container-id', 'http://url-to.pdf');
+
+pdf.enableSelector(); // Enable moviing tool
+
+pdf.enablePencil(); // Enable pencil tool
+
+pdf.enableAddText(); // Enable add text tool
+
+pdf.enableAddArrow(); // Enable add arrow tool
+
+pdf.deleteSelectedObject(); // Delete selected object
+
+pdf.clearActivePage(); // Clear current page
+
+pdf.savePdf(); // Save PDF with name sample.pdf
+
+pdf.serializePdf(); // returns JSON string with canvas data
+
+pdf.setColor(color); // Set color for tools (Example: pdf.setColor(red) , pdf.setColor('#fff'))
+
+pdf.setBrushSize(width); // Set brush size for pencil tool (Example: pdf.setBrushSize(5))
+
+pdf.setFontSize(font_size); // Set font size for text tool (Example: pdf.setFontSize(18))
+```
