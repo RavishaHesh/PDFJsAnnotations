@@ -1,0 +1,8 @@
+canvas, .canvas-container {
+    margin-bottom: 25px;
+}
+
+.canvas-container {
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -3,92 +3,95 @@
  * email: ravishaheshan@gmail.com
  */
 
-var url = "http://pdftest.test/pdf.pdf";
-var number_of_pages = 0;
-var pages_rendered = 0;
-var active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
-var fabricObjects = [];
-var color = '#212121';
-var font_size = 16;
-var active_canvas = 0;
+var x = new PDFAnnotate('pdf-container', 'http://pdftest.test/pdf.pdf');
 
-var loadingTask = PDFJS.getDocument(url);
-loadingTask.promise.then(function (pdf) {
-    var scale = 1.5;
-    number_of_pages = pdf.pdfInfo.numPages;
-    for (var i = 1; i <= pdf.pdfInfo.numPages; i++) {
-        pdf.getPage(i).then(function (page) {
-            var viewport = page.getViewport(scale);
-            var canvas = document.createElement('canvas');
-            document.getElementById('pdf-container').appendChild(canvas);
-            canvas.className = 'pdf-canvas';
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            context = canvas.getContext('2d');
+// var url = "http://pdftest.test/pdf.pdf";
+// var number_of_pages = 0;
+// var pages_rendered = 0;
+// var active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
+// var fabricObjects = [];
+// var color = '#212121';
+// var font_size = 16;
+// var active_canvas = 0;
 
-            var renderContext = {
-                canvasContext: context,
-                viewport: viewport
-            };
-            var renderTask = page.render(renderContext);
-            renderTask.then(function () {
-                $('.pdf-canvas').each(function (index, el) {
-                    $(el).attr('id', 'page-' + (index + 1) + '-canvas');
-                });
-                pages_rendered++;
-                if (pages_rendered == number_of_pages) initFabric();
-            });
-        });
-    }
-}, function (reason) {
-    console.error(reason);
-});
+// var loadingTask = PDFJS.getDocument(url);
+// loadingTask.promise.then(function (pdf) {
+//     var scale = 1.3;
+//     number_of_pages = pdf.pdfInfo.numPages;
+//     for (var i = 1; i <= pdf.pdfInfo.numPages; i++) {
+//         pdf.getPage(i).then(function (page) {
+//             var viewport = page.getViewport(scale);
+//             var canvas = document.createElement('canvas');
+//             document.getElementById('pdf-container').appendChild(canvas);
+//             canvas.className = 'pdf-canvas';
+//             canvas.height = viewport.height;
+//             canvas.width = viewport.width;
+//             context = canvas.getContext('2d');
 
-function initFabric() {
-    $('canvas').each(function (index, el) {
-        var background = el.toDataURL("image/png");
-        var fabricObj = new fabric.Canvas(el.id, {
-            freeDrawingBrush: {
-                width: 1,
-                color: color
-            }
-        });
-        fabricObjects.push(fabricObj);
-        fabricObj.setBackgroundImage(background, fabricObj.renderAll.bind(fabricObj));
-        $(fabricObj.upperCanvasEl).click(function (event) {
-            active_canvas = index;
-            $('#clear-page').text('Clear Page ' + (index + 1));
-            fabricClickHandler(event, fabricObj);
-        });
-    });
-}
+//             var renderContext = {
+//                 canvasContext: context,
+//                 viewport: viewport
+//             };
+//             var renderTask = page.render(renderContext);
+//             renderTask.then(function () {
+//                 $('.pdf-canvas').each(function (index, el) {
+//                     $(el).attr('id', 'page-' + (index + 1) + '-canvas');
+//                 });
+//                 pages_rendered++;
+//                 if (pages_rendered == number_of_pages) initFabric();
+//             });
+//         });
+//     }
+// }, function (reason) {
+//     console.error(reason);
+// });
 
-function fabricClickHandler(event, fabricObj) {
-    if (active_tool == 2) {
-        var text = new fabric.IText('Sample text', {
-            left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
-            top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top,
-            fill: color,
-            fontSize: font_size,
-            selectable: true
-        });
-        fabricObj.add(text);
-        active_tool = 0;
-        $('.tool-button.active').removeClass('active');
-    }
-}
+// function initFabric() {
+//     $('canvas').each(function (index, el) {
+//         var background = el.toDataURL("image/png");
+//         var fabricObj = new fabric.Canvas(el.id, {
+//             freeDrawingBrush: {
+//                 width: 1,
+//                 color: color
+//             }
+//         });
+//         fabricObjects.push(fabricObj);
+//         fabricObj.setBackgroundImage(background, fabricObj.renderAll.bind(fabricObj));
+//         $(fabricObj.upperCanvasEl).click(function (event) {
+//             active_canvas = index;
+//             $('#clear-page').text('Clear Page ' + (index + 1));
+//             fabricClickHandler(event, fabricObj);
+//         });
+//     });
+// }
+
+// function fabricClickHandler(event, fabricObj) {
+//     if (active_tool == 2) {
+//         var text = new fabric.IText('Sample text', {
+//             left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
+//             top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top,
+//             fill: color,
+//             fontSize: font_size,
+//             selectable: true
+//         });
+//         fabricObj.add(text);
+//         active_tool = 0;
+//         $('.tool-button.active').removeClass('active');
+//     }
+// }
 
 function enableSelector(event) {
     event.preventDefault();
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
     $('.tool-button.active').removeClass('active');
     $(element).addClass('active');
-    active_tool = 0;
-    if (fabricObjects.length > 0) {
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.isDrawingMode = false;
-        });
-    }
+    x.enableSelector();
+    // active_tool = 0;
+    // if (fabricObjects.length > 0) {
+    //     $.each(fabricObjects, function (index, fabricObj) {
+    //         fabricObj.isDrawingMode = false;
+    //     });
+    // }
 }
 
 function enablePencil(event) {
@@ -96,12 +99,13 @@ function enablePencil(event) {
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
     $('.tool-button.active').removeClass('active');
     $(element).addClass('active');
-    active_tool = 1;
-    if (fabricObjects.length > 0) {
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.isDrawingMode = true;
-        });
-    }
+    x.enablePencil();
+    // active_tool = 1;
+    // if (fabricObjects.length > 0) {
+    //     $.each(fabricObjects, function (index, fabricObj) {
+    //         fabricObj.isDrawingMode = true;
+    //     });
+    // }
 }
 
 function enableAddText(event) {
@@ -109,12 +113,13 @@ function enableAddText(event) {
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
     $('.tool-button.active').removeClass('active');
     $(element).addClass('active');
-    active_tool = 2;
-    if (fabricObjects.length > 0) {
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.isDrawingMode = false;
-        });
-    }
+    x.enableAddText();
+    // active_tool = 2;
+    // if (fabricObjects.length > 0) {
+    //     $.each(fabricObjects, function (index, fabricObj) {
+    //         fabricObj.isDrawingMode = false;
+    //     });
+    // }
 }
 
 function enableAddArrow(event) {
@@ -122,38 +127,40 @@ function enableAddArrow(event) {
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
     $('.tool-button.active').removeClass('active');
     $(element).addClass('active');
-    active_tool = 3;
-    if (fabricObjects.length > 0) {
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.isDrawingMode = false;
-            new Arrow(fabricObj, color, function () {
-                active_tool = 0;
-                $('.tool-button.active').removeClass('active');
-            });
-        });
-    }
+    x.enableAddArrow();
+    // active_tool = 3;
+    // if (fabricObjects.length > 0) {
+    //     $.each(fabricObjects, function (index, fabricObj) {
+    //         fabricObj.isDrawingMode = false;
+    //         new Arrow(fabricObj, color, function () {
+    //             active_tool = 0;
+    //             $('.tool-button.active').removeClass('active');
+    //         });
+    //     });
+    // }
 }
 
 function deleteSelectedObject() {
     event.preventDefault();
-    var activeObject = fabricObjects[active_canvas].getActiveObject();
-    if (activeObject)
-    {
-        if (confirm('Are you sure ?')) fabricObjects[active_canvas].remove(activeObject);
-    }
+    x.deleteSelectedObject();
+    // var activeObject = fabricObjects[active_canvas].getActiveObject();
+    // if (activeObject)
+    // {
+    //     if (confirm('Are you sure ?')) fabricObjects[active_canvas].remove(activeObject);
+    // }
 }
 
 function savePDF() {
-    var images = [];
-    var doc = new jsPDF();
-    $.each(fabricObjects, function (index, fabricObj) {
-        doc.addPage();
-        doc.setPage(index);
-        var image = fabricObj.toDataURL('png');
-        console.log(image);
-        doc.addImage(image, 'png', 0, 0);
-    });
-    doc.save('sample.pdf');    
+    x.savePdf();
+    // var doc = new jsPDF();
+    // $.each(fabricObjects, function (index, fabricObj) {
+    //     if (index != 0) {
+    //         doc.addPage();
+    //         doc.setPage(index + 1);
+    //     }
+    //     doc.addImage(fabricObj.toDataURL(), 'png', 0, 0);
+    // });
+    // doc.save('sample.pdf');
 }
 
 $(function () {
@@ -161,28 +168,29 @@ $(function () {
         $('.color-tool.active').removeClass('active');
         $(this).addClass('active');
         color = $(this).get(0).style.backgroundColor;
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.freeDrawingBrush.color = color;
-        });
+        x.setColor(color);
     });
 
     $('#brush-size').change(function () {
         var width = $(this).val();
-        $.each(fabricObjects, function (index, fabricObj) {
-            fabricObj.freeDrawingBrush.width = width;
-        });
+        x.setBrushSize(width);
+        // $.each(fabricObjects, function (index, fabricObj) {
+        //     fabricObj.freeDrawingBrush.width = width;
+        // });
     });
 
     $('#font-size').change(function () {
-        font_size = $(this).val();
+        var font_size = $(this).val();
+        x.setFontSize(font_size);
     });
 
     $('#clear-page').click(function () {
-        var fabricObj = fabricObjects[active_canvas];
-        var bg = fabricObj.backgroundImage;
-        if (confirm('Are you sure?')) {
-            fabricObj.clear();
-            fabricObj.setBackgroundImage(bg, fabricObj.renderAll.bind(fabricObj));
-        }
+        x.clearActivePage();
+        // var fabricObj = fabricObjects[active_canvas];
+        // var bg = fabricObj.backgroundImage;
+        // if (confirm('Are you sure?')) {
+        //     fabricObj.clear();
+        //     fabricObj.setBackgroundImage(bg, fabricObj.renderAll.bind(fabricObj));
+        // }
     });
 });
