@@ -176,3 +176,8 @@ PDFAnnotate.prototype.clearActivePage = function () {
 	    fabricObj.setBackgroundImage(bg, fabricObj.renderAll.bind(fabricObj));
 	}
 }
+
+PDFAnnotate.prototype.serializePdf = function() {
+	var inst = this;
+	return JSON.stringify(inst.fabricObjects, null, 4);
+}

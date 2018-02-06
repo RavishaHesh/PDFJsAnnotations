@@ -21,6 +21,7 @@ canvas, .canvas-container {
 #pdf-container {
     margin-top: 60px;
     padding-left: 10px;
+    text-align: center;
 }
 
 button:focus {
