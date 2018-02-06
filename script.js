@@ -143,6 +143,16 @@ function deleteSelectedObject() {
     }
 }
 
+function savePDF() {
+    var images = [];
+    var doc = new jsPDF();
+    $.each(fabricObjects, function (index, fabricObj) {
+        doc.addPage();
+        doc.setPage(index);
+        images.push(fabricObj.Canvas.toDataURL('png'));
+    });
+}
+
 $(function () {
     $('.color-tool').click(function () {
         $('.color-tool.active').removeClass('active');

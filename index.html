@@ -38,7 +38,7 @@
 		<button class="color-tool" style="background-color: yellow;"></button>
 	</div>
 	<div class="tool">
-		<button class="tool-button"><i class="fa fa-hand-paper-o" title="Free Hand" onclick="enableSelector(event)"></i></button>
+		<button class="tool-button active"><i class="fa fa-hand-paper-o" title="Free Hand" onclick="enableSelector(event)"></i></button>
 	</div>
 	<div class="tool">
 		<button class="tool-button"><i class="fa fa-pencil" title="Pencil" onclick="enablePencil(event)"></i></button>
@@ -56,13 +56,14 @@
 		<button class="btn btn-danger btn-sm" id="clear-page">Clear Page 1</button>
 	</div>
 	<div class="tool">
-		<button class="btn btn-light btn-sm"><i class="fa fa-save"></i> Save</button>
+		<button class="btn btn-light btn-sm" onclick="savePDF()"><i class="fa fa-save"></i> Save</button>
 	</div>
 </div>
 <div id="pdf-container"></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.328/pdf.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/1.7.22/fabric.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.5/jspdf.debug.js"></script>
 <script src="./arrow.fabric.js"></script>
 <script src="./script.js"></script>
 </body>

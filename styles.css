@@ -28,6 +28,10 @@ canvas, .canvas-container {
     padding-left: 10px;
 }
 
+button:focus {
+    outline: 0;
+}
+
 .toolbar .tool {
     display: inline-block;
     color: #fff;
