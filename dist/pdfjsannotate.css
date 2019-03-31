@@ -1,0 +1,12 @@
+/**
+ * PDFAnnotate v2.0.0
+ * Author: Ravisha Heshan
+ */
+.canvas-container {
+	margin-bottom: 10px;
+	width: 100% !important;
+}
+
+.pdf-page-canvas {
+	left: 50% !important;
+}

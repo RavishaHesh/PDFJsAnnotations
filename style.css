@@ -1,0 +1,32 @@
+html, body {
+	height: 100%;
+	background-color: #757575;
+}
+
+.toolbar {
+	height: 60px;
+	position: fixed;
+	z-index: 10;
+	background-color: #424242;
+	width: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+
+}
+
+.toolbar .tool {
+    display: inline-block;
+    color: #fff;
+    height: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    margin-right: 5px;
+}
+
+#pdf-container {
+	margin-top: 80px;
+    padding-left: 10px;
+    text-align: center;
+    display: none;
+}
