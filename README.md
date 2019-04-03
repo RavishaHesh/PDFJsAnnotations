@@ -63,5 +63,5 @@ pdf.setBrushSize(width); // Set brush size for pencil tool (Example: pdf.setBrus
 
 pdf.setFontSize(font_size); // Set font size for text tool (Example: pdf.setFontSize(18))
 
-pdf.setBorderSize(font_size); // Set border size of rectangles (Example: pdf.setBorderSize(2))
+pdf.setBorderSize(border_size); // Set border size of rectangles (Example: pdf.setBorderSize(2))
 ```
