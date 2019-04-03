@@ -6,9 +6,11 @@
 var PDFAnnotate = function(container_id, url) {
 	this.number_of_pages = 0;
 	this.pages_rendered = 0;
-	this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
+	this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow, 4 - Rectangle
 	this.fabricObjects = [];
 	this.color = '#212121';
+	this.borderColor = '#000000';
+	this.borderSize = 1;
 	this.font_size = 16;
 	this.active_canvas = 0;
 	this.container_id = container_id;
@@ -113,6 +115,26 @@ PDFAnnotate.prototype.enableAddText = function () {
 	}
 }
 
+PDFAnnotate.prototype.enableRectangle = function () {
+	var inst = this;
+	var fabricObj = inst.fabricObjects[inst.active_canvas];
+	inst.active_tool = 4;
+	if (inst.fabricObjects.length > 0) {
+		$.each(inst.fabricObjects, function (index, fabricObj) {
+			fabricObj.isDrawingMode = false;
+		});
+	}
+
+	var rect = new fabric.Rect({
+		width: 100,
+		height: 100,
+		fill: inst.color,
+		stroke: inst.borderColor,
+		strokeSize: inst.borderSize
+	});
+	fabricObj.add(rect);
+}
+
 PDFAnnotate.prototype.enableAddArrow = function () {
 	var inst = this;
 	inst.active_tool = 3;
@@ -163,8 +185,17 @@ PDFAnnotate.prototype.setColor = function (color) {
     });
 }
 
+PDFAnnotate.prototype.setBorderColor = function (color) {
+	var inst = this;
+	inst.borderColor = color;
+}
+
 PDFAnnotate.prototype.setFontSize = function (size) {
 	this.font_size = size;
+}
+
+PDFAnnotate.prototype.setBorderSize = function (size) {
+	this.borderSize = size;
 }
 
 PDFAnnotate.prototype.clearActivePage = function () {
