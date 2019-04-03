@@ -30,6 +30,8 @@
 
 - Export PDF with annotations (using jsPDF)
 
+**Important: exported file will be a PDF with set of images. So you won't be able to use functions like text selections.**
+
 # Usage 
 
 ```javascript
