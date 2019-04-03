@@ -30,7 +30,7 @@
 
 - Export PDF with annotations (using jsPDF)
 
-**Important: exported file will be a PDF with set of images. So you won't be able to use functions like text selections.**
+**Important: exported file will be a PDF with set of images. So you won't be able to use functions like text selections. trying my best to add the text layer. Due to lack of PDFJs documentation about this section progress is very slow. If anyone interested you can check the progress on `dev` branch.**
 
 # Usage 
 
