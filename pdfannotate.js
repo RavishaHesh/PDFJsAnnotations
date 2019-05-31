@@ -212,3 +212,14 @@ PDFAnnotate.prototype.serializePdf = function() {
 	var inst = this;
 	return JSON.stringify(inst.fabricObjects, null, 4);
 }
+
+
+
+PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
+	var inst = this;
+	inst.fabricObjects.forEach(function (canvas, index) {
+		if (jsonData.length > index) {
+			canvas.loadFromJSON(jsonData[index])
+		}
+	})
+}
