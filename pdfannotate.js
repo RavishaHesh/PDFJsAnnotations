@@ -217,9 +217,9 @@ PDFAnnotate.prototype.serializePdf = function() {
 
 PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 	var inst = this;
-	inst.fabricObjects.forEach(function (canvas, index) {
+	$.each(inst.fabricObjects, function (index, fabricObj) {
 		if (jsonData.length > index) {
-			canvas.loadFromJSON(jsonData[index])
+			fabricObj.loadFromJSON(jsonData[index])
 		}
 	})
 }
