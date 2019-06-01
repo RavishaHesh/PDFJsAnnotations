@@ -55,6 +55,8 @@ pdf.savePdf(); // Save PDF with name sample.pdf
 
 pdf.serializePdf(); // returns JSON string with canvas data
 
+pdf.loadFromJSON(serializedJSON) // continue edit with saved JSON
+
 pdf.setColor(color); // Set color for tools (Example: pdf.setColor(red) , pdf.setColor('#fff'), pdf.setColor('rgba(255,0,0,0.5)'))
 
 pdf.setBorderColor(color); // Set border color for rectangle tool (Example: pdf.setBorderColor(red) , pdf.setBorderColor('#fff'))
