@@ -1,4 +1,4 @@
-var pdf = new PDFAnnotate('pdf-container', 'http://pdftest.test/pdf.pdf');
+var pdf = new PDFAnnotate('pdf-container', 'pdf.pdf');
 
 function enableSelector(event) {
     event.preventDefault();
