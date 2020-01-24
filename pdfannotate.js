@@ -3,11 +3,12 @@
  * Author: Ravisha Heshan
  */
 
-var PDFAnnotate = function(container_id, url) {
+var PDFAnnotate = function(container_id, url, options = {}) {
 	this.number_of_pages = 0;
 	this.pages_rendered = 0;
 	this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow, 4 - Rectangle
 	this.fabricObjects = [];
+	this.fabricObjectsData = [];
 	this.color = '#212121';
 	this.borderColor = '#000000';
 	this.borderSize = 1;
@@ -60,13 +61,24 @@ var PDFAnnotate = function(container_id, url) {
 	                color: inst.color
 	            }
 	        });
-	        inst.fabricObjects.push(fabricObj);
+			inst.fabricObjects.push(fabricObj);
+			if (typeof options.onPageUpdated == 'function') {
+				fabricObj.on('object:added', function() {
+					var oldValue = Object.assign({}, inst.fabricObjectsData[index]);
+					inst.fabricObjectsData[index] = fabricObj.toJSON()
+					options.onPageUpdated(index + 1, oldValue, inst.fabricObjectsData[index]) 
+				})
+			}
 	        fabricObj.setBackgroundImage(background, fabricObj.renderAll.bind(fabricObj));
 	        $(fabricObj.upperCanvasEl).click(function (event) {
 	            inst.active_canvas = index;
 	            inst.fabricClickHandler(event, fabricObj);
-	        });
-	    });
+			});
+			fabricObj.on('after:render', function () {
+				inst.fabricObjectsData[index] = fabricObj.toJSON()
+				fabricObj.off('after:render')
+			})
+		});
 	}
 
 	this.fabricClickHandler = function(event, fabricObj) {
@@ -219,7 +231,9 @@ PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 	var inst = this;
 	$.each(inst.fabricObjects, function (index, fabricObj) {
 		if (jsonData.length > index) {
-			fabricObj.loadFromJSON(jsonData[index])
+			fabricObj.loadFromJSON(jsonData[index], function () {
+				inst.fabricObjectsData[index] = fabricObj.toJSON()
+			})
 		}
 	})
 }

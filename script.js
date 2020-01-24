@@ -1,4 +1,8 @@
-var pdf = new PDFAnnotate('pdf-container', 'pdf.pdf');
+var pdf = new PDFAnnotate('pdf-container', 'pdf.pdf', {
+    onPageUpdated: (page, oldData, newData) => {
+        console.log(page, oldData, newData);
+    }
+});
 
 function enableSelector(event) {
     event.preventDefault();
