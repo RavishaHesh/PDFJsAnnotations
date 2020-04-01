@@ -43,6 +43,8 @@ pdf.enablePencil(); // Enable pencil tool
 
 pdf.enableAddText(); // Enable add text tool
 
+pdf.enableAddImage(); //Enable add image tool
+
 pdf.enableAddArrow(); // Enable add arrow tool
 
 pdf.enableRectangle(); // Adds a rectangle
