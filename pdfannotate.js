@@ -95,15 +95,17 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	        inst.active_tool = 0;
 		}
 		if (inst.active_tool == 5) {
-			fabric.Image.fromURL('facebook.png', (oImg) => {
+			var imgObj = new Image();
+			imgObj.src = document.getElementById('out-image').src;
+
+			fabric.Image.fromURL(  imgObj.src  , (oImg) => {
 				fabricObj.add(oImg);
-				inst.active_tool = 0;
+				
 			}, {
 				left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
 	            top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top
 			});
-			
-
+			inst.active_tool = 0;
 			
 		}	
 	}

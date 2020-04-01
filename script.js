@@ -32,8 +32,29 @@ function enableAddImage(event) {
     event.preventDefault();
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
     $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
-    pdf.enableAddImage();
+
+    document.getElementById('file-input').click();
+
+    document.getElementById('file-input').onchange = function (evt) {
+        var tgt = evt.target || window.event.srcElement,
+            files = tgt.files;
+        if (FileReader && files && files.length) {
+            var fr = new FileReader();
+            fr.onload = function () {
+                document.getElementById("out-image").src = fr.result;
+            }
+            fr.readAsDataURL(files[0]);
+            pdf.enableAddImage();
+        }
+    
+        // Not supported
+        else {
+            // fallback -- perhaps submit the input to an iframe and temporarily store
+            // them on the server until the user's session ends.
+        }
+    }
+
+    
 }
 
 function enableAddArrow(event) {
