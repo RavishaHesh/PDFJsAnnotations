@@ -10,6 +10,8 @@
 
 - Add text
 
+- Add image
+
 - Add arrows
 
 - Add rectangles
