@@ -93,8 +93,21 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	        });
 	        fabricObj.add(text);
 	        inst.active_tool = 0;
-	    }
+		}
+		if (inst.active_tool == 5) {
+			fabric.Image.fromURL('facebook.png', (oImg) => {
+				fabricObj.add(oImg);
+				inst.active_tool = 0;
+			}, {
+				left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
+	            top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top
+			});
+			
+
+			
+		}	
 	}
+	
 }
 
 PDFAnnotate.prototype.enableSelector = function () {
@@ -120,6 +133,16 @@ PDFAnnotate.prototype.enablePencil = function () {
 PDFAnnotate.prototype.enableAddText = function () {
 	var inst = this;
 	inst.active_tool = 2;
+	if (inst.fabricObjects.length > 0) {
+	    $.each(inst.fabricObjects, function (index, fabricObj) {
+	        fabricObj.isDrawingMode = false;
+	    });
+	}
+}
+
+PDFAnnotate.prototype.enableAddImage = function () {
+	var inst = this;
+	inst.active_tool = 5;
 	if (inst.fabricObjects.length > 0) {
 	    $.each(inst.fabricObjects, function (index, fabricObj) {
 	        fabricObj.isDrawingMode = false;

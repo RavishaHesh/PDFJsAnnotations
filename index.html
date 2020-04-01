@@ -49,6 +49,9 @@
 		<button class="tool-button"><i class="fa fa-font" title="Add Text" onclick="enableAddText(event)"></i></button>
 	</div>
 	<div class="tool">
+		<button class="tool-button"><i class="fa fa-picture-o" title="Add Image" onclick="enableAddImage(event)"></i></button>
+	</div>
+	<div class="tool">
 		<button class="tool-button"><i class="fa fa-long-arrow-right" title="Add Arrow" onclick="enableAddArrow(event)"></i></button>
 	</div>
 	<div class="tool">
@@ -85,6 +88,14 @@
 		</div>
 	</div>
 </div>
+
+<form id="file-input" onsubmit="() => document.getElementById('file-input').classList.toggle('hidden sent')">
+	<input type="file" id="img-src" class="hidden">
+
+	<button type="submit">Inserir imagem</button>
+</form>
+
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>

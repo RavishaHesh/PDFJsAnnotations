@@ -28,6 +28,14 @@ function enableAddText(event) {
     pdf.enableAddText();
 }
 
+function enableAddImage(event) {
+    event.preventDefault();
+    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
+    $('.tool-button.active').removeClass('active');
+    $(element).addClass('active');
+    pdf.enableAddImage();
+}
+
 function enableAddArrow(event) {
     event.preventDefault();
     var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
@@ -65,7 +73,6 @@ function showPdfData() {
     PR.prettyPrint();
     $('#dataModal').modal('show');
 }
-
 $(function () {
     $('.color-tool').click(function () {
         $('.color-tool.active').removeClass('active');

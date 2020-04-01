@@ -82,3 +82,13 @@ button:focus {
     background-color: rgb(82, 86, 89);
     border-color: rgb(82, 86, 89);
 }
+
+#file-input {
+    display: block;
+    position: fixed;
+    margin-top: 0 auto auto auto;
+}
+
+.hidden{
+    display: none;
+}
