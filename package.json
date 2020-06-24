@@ -1,7 +1,7 @@
 {
-  "name": "PDFJSAnnotations",
+  "name": "pdf-js-annotations",
   "version": "2.0.0",
-  "description": "Small and simple libarary to add annotations on top of your PDFs",
+  "description": "Small and simple library to add annotations on top of your PDFs",
   "scripts": {
     "dev": "npm run development",
     "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
@@ -14,16 +14,9 @@
   "author": "Ravisha Heshan",
   "license": "MIT",
   "devDependencies": {
-    "bootstrap": "^4.3.1",
     "cross-env": "^5.2.0",
-    "font-awesome": "^4.7.0",
-    "jquery": "^3.3.1",
-    "laravel-mix": "^4.0.15",
-    "popper.js": "^1.14.7",
-    "resolve-url-loader": "2.3.1",
-    "sass": "^1.17.3",
-    "sass-loader": "7.*",
-    "vue-template-compiler": "^2.6.10"
+    "laravel-mix": "^5.0.4",
+    "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
     "fabric": "^2.7.0",
