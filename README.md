@@ -55,7 +55,7 @@ pdf.savePdf(); // Save PDF with name sample.pdf
 
 pdf.serializePdf(); // returns JSON string with canvas data
 
-pdf.loadFromJSON(serializedJSON) // continue edit with saved JSON
+pdf.loadFromJSON(serializedJSON) // continue edit with saved JSON. To do this on page load use `ready` option(scripts.js line 5)
 
 pdf.setColor(color); // Set color for tools (Example: pdf.setColor(red) , pdf.setColor('#fff'), pdf.setColor('rgba(255,0,0,0.5)'))
 

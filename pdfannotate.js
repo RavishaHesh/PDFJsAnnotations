@@ -53,7 +53,8 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 
 	this.initFabric = function () {
 		var inst = this;
-	    $('#' + inst.container_id + ' canvas').each(function (index, el) {
+		let canvases = $('#' + inst.container_id + ' canvas')
+	    canvases.each(function (index, el) {
 	        var background = el.toDataURL("image/png");
 	        var fabricObj = new fabric.Canvas(el.id, {
 	            freeDrawingBrush: {
@@ -78,6 +79,10 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 				inst.fabricObjectsData[index] = fabricObj.toJSON()
 				fabricObj.off('after:render')
 			})
+
+			if (index === canvases.length - 1 && typeof options.ready === 'function') {
+				options.ready()
+			}
 		});
 	}
 

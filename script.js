@@ -1,6 +1,9 @@
 var pdf = new PDFAnnotate('pdf-container', 'pdf.pdf', {
-    onPageUpdated: (page, oldData, newData) => {
+    onPageUpdated(page, oldData, newData) {
         console.log(page, oldData, newData);
+    },
+    ready() {
+        console.log('Plugin initialized successfully');
     }
 });
 
