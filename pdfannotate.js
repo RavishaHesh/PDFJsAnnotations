@@ -18,14 +18,14 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	this.url = url;
 	var inst = this;
 
-	var loadingTask = PDFJS.getDocument(this.url);
+	var loadingTask = pdfjsLib.getDocument(this.url);
 	loadingTask.promise.then(function (pdf) {
-	    var scale = 1.3;
-	    inst.number_of_pages = pdf.pdfInfo.numPages;
+		var scale = options.scale ? options.scale : 1.3;
+	    inst.number_of_pages = pdf.numPages;
 
-	    for (var i = 1; i <= pdf.pdfInfo.numPages; i++) {
+	    for (var i = 1; i <= pdf.numPages; i++) {
 	        pdf.getPage(i).then(function (page) {
-	            var viewport = page.getViewport(scale);
+	            var viewport = page.getViewport({scale: scale});
 	            var canvas = document.createElement('canvas');
 	            document.getElementById(inst.container_id).appendChild(canvas);
 	            canvas.className = 'pdf-canvas';
@@ -36,9 +36,9 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	            var renderContext = {
 	                canvasContext: context,
 	                viewport: viewport
-	            };
+				};
 	            var renderTask = page.render(renderContext);
-	            renderTask.then(function () {
+	            renderTask.promise.then(function () {
 	                $('.pdf-canvas').each(function (index, el) {
 	                    $(el).attr('id', 'page-' + (index + 1) + '-canvas');
 	                });
@@ -165,6 +165,31 @@ PDFAnnotate.prototype.enableAddArrow = function () {
 	}
 }
 
+PDFAnnotate.prototype.addImageToCanvas = function () {
+	var inst = this;
+	var fabricObj = inst.fabricObjects[inst.active_canvas];
+
+	if (fabricObj) {
+		var inputElement = document.createElement("input");
+		inputElement.type = 'file'
+		inputElement.accept = ".jpg,.jpeg,.png,.PNG,.JPG,.JPEG";
+		inputElement.onchange = function() {
+			var reader = new FileReader();
+			reader.addEventListener("load", function () {
+				inputElement.remove()
+				var image = new Image();
+				image.onload = function () {
+					fabricObj.add(new fabric.Image(image))
+				}
+				image.src = this.result;
+			}, false);
+			reader.readAsDataURL(inputElement.files[0]);
+		}
+		document.getElementsByTagName('body')[0].appendChild(inputElement)
+		inputElement.click()
+	} 
+}
+
 PDFAnnotate.prototype.deleteSelectedObject = function () {
 	var inst = this;
 	var activeObject = inst.fabricObjects[inst.active_canvas].getActiveObject();
@@ -176,7 +201,7 @@ PDFAnnotate.prototype.deleteSelectedObject = function () {
 
 PDFAnnotate.prototype.savePdf = function () {
 	var inst = this;
-	var doc = new jsPDF();
+	var doc = new jspdf.jsPDF();
 	$.each(inst.fabricObjects, function (index, fabricObj) {
 	    if (index != 0) {
 	        doc.addPage();
