@@ -4,54 +4,58 @@ var pdf = new PDFAnnotate('pdf-container', 'pdf.pdf', {
     },
     ready() {
         console.log('Plugin initialized successfully');
-    }
+    },
+    scale: 1.5
 });
+
+function changeActiveTool(event) {
+    var element = $(event.target).hasClass("tool-button")
+      ? $(event.target)
+      : $(event.target).parents(".tool-button").first();
+    $(".tool-button.active").removeClass("active");
+    $(element).addClass("active");
+}
 
 function enableSelector(event) {
     event.preventDefault();
-    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-    $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
+    changeActiveTool(event);
     pdf.enableSelector();
 }
 
 function enablePencil(event) {
     event.preventDefault();
-    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-    $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
+    changeActiveTool(event);
     pdf.enablePencil();
 }
 
 function enableAddText(event) {
     event.preventDefault();
-    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-    $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
+    changeActiveTool(event);
     pdf.enableAddText();
 }
 
 function enableAddArrow(event) {
     event.preventDefault();
-    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-    $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
+    changeActiveTool(event);
     pdf.enableAddArrow();
+}
+
+function addImage(event) {
+    event.preventDefault();
+    pdf.addImageToCanvas()
 }
 
 function enableRectangle(event) {
     event.preventDefault();
-    var element = ($(event.target).hasClass('tool-button')) ? $(event.target) : $(event.target).parents('.tool-button').first();
-    $('.tool-button.active').removeClass('active');
-    $(element).addClass('active');
+    changeActiveTool(event);
     pdf.setColor('rgba(255, 0, 0, 0.3)');
     pdf.setBorderColor('blue');
     pdf.enableRectangle();
 }
 
-function deleteSelectedObject() {
-    event.preventDefault();
-    pdf.deleteSelectedObject();
+function deleteSelectedObject(event) {
+  event.preventDefault();
+  pdf.deleteSelectedObject();
 }
 
 function savePDF() {
