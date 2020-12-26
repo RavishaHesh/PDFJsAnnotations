@@ -206,8 +206,15 @@ PDFAnnotate.prototype.savePdf = function () {
 	    if (index != 0) {
 	        doc.addPage();
 	        doc.setPage(index + 1);
-	    }
-	    doc.addImage(fabricObj.toDataURL(), 'png', 0, 0);
+		}
+	    doc.addImage(
+			fabricObj.toDataURL(),
+			"png",
+			0,
+			0,
+			doc.internal.pageSize.getWidth(),
+			doc.internal.pageSize.getHeight()
+		);
 	});
 	doc.save('sample.pdf');
 }
