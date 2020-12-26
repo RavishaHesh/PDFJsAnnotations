@@ -14,6 +14,8 @@
 
 - Add rectangles
 
+- Add image
+
 - Change colors
 
 - Change Brush size
