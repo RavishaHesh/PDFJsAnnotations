@@ -49,6 +49,8 @@ pdf.enableAddArrow(); // Enable add arrow tool
 
 pdf.enableRectangle(); // Adds a rectangle
 
+pdf.addImageToCanvas() // Add an image
+
 pdf.deleteSelectedObject(); // Delete selected object
 
 pdf.clearActivePage(); // Clear current page
