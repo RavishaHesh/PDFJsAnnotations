@@ -16,6 +16,9 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	this.active_canvas = 0;
 	this.container_id = container_id;
 	this.url = url;
+	this.pageImageCompression = options.pageImageCompression
+    ? options.pageImageCompression.toUpperCase()
+    : "NONE";
 	var inst = this;
 
 	var loadingTask = pdfjsLib.getDocument(this.url);
@@ -208,13 +211,16 @@ PDFAnnotate.prototype.savePdf = function () {
 	        doc.setPage(index + 1);
 		}
 	    doc.addImage(
-			fabricObj.toDataURL(),
-			"png",
-			0,
-			0,
-			doc.internal.pageSize.getWidth(),
-			doc.internal.pageSize.getHeight()
-		);
+        fabricObj.toDataURL(),
+        inst.pageImageCompression == "NONE" ? "PNG" : "JPEG",
+        0,
+        0,
+        doc.internal.pageSize.getWidth(),
+        doc.internal.pageSize.getHeight(),
+        ["FAST", "MEDIUM", "SLOW"].indexOf(inst.pageImageCompression) >= 0
+          ? inst.pageImageCompression
+          : undefined
+      );
 	});
 	doc.save('sample.pdf');
 }
