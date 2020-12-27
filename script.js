@@ -60,7 +60,8 @@ function deleteSelectedObject(event) {
 }
 
 function savePDF() {
-    pdf.savePdf();
+    // pdf.savePdf();
+    pdf.savePdf('sample.pdf'); // save with given file name
 }
 
 function clearPage() {
