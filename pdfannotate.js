@@ -1,5 +1,5 @@
 /**
- * PDFAnnotate v1.0.0
+ * PDFAnnotate v1.0.1
  * Author: Ravisha Heshan
  */
 
