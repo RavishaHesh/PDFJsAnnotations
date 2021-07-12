@@ -19,6 +19,7 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	this.pageImageCompression = options.pageImageCompression
     ? options.pageImageCompression.toUpperCase()
     : "NONE";
+	this.textBoxText = 'Sample Text';
 	var inst = this;
 
 	var loadingTask = pdfjsLib.getDocument(this.url);
@@ -92,7 +93,7 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 	this.fabricClickHandler = function(event, fabricObj) {
 		var inst = this;
 	    if (inst.active_tool == 2) {
-	        var text = new fabric.IText('Sample text', {
+	        var text = new fabric.IText(inst.textBoxText, {
 	            left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
 	            top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top,
 	            fill: inst.color,
@@ -125,9 +126,12 @@ PDFAnnotate.prototype.enablePencil = function () {
 	}
 }
 
-PDFAnnotate.prototype.enableAddText = function () {
+PDFAnnotate.prototype.enableAddText = function (text) {
 	var inst = this;
 	inst.active_tool = 2;
+	if (typeof text === 'string') {
+		inst.textBoxText = text
+	}
 	if (inst.fabricObjects.length > 0) {
 	    $.each(inst.fabricObjects, function (index, fabricObj) {
 	        fabricObj.isDrawingMode = false;
@@ -277,8 +281,6 @@ PDFAnnotate.prototype.serializePdf = function() {
 	return JSON.stringify(inst.fabricObjects, null, 4);
 }
 
-
-
 PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 	var inst = this;
 	$.each(inst.fabricObjects, function (index, fabricObj) {
@@ -288,4 +290,11 @@ PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 			})
 		}
 	})
+}
+
+PDFAnnotate.prototype.setDefaultTextForTextBox = function (text) {
+	var inst = this;
+	if (typeof text === 'string') {
+		inst.textBoxText = text
+	}
 }
