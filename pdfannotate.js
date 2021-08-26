@@ -20,6 +20,7 @@ var PDFAnnotate = function(container_id, url, options = {}) {
     ? options.pageImageCompression.toUpperCase()
     : "NONE";
 	this.textBoxText = 'Sample Text';
+	this.pages = [];
 	var inst = this;
 
 	var loadingTask = pdfjsLib.getDocument(this.url);
@@ -29,6 +30,7 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 
 	    for (var i = 1; i <= pdf.numPages; i++) {
 	        pdf.getPage(i).then(function (page) {
+				inst.pages.push(page);
 	            var viewport = page.getViewport({scale: scale});
 	            var canvas = document.createElement('canvas');
 	            document.getElementById(inst.container_id).appendChild(canvas);
@@ -208,14 +210,24 @@ PDFAnnotate.prototype.deleteSelectedObject = function () {
 
 PDFAnnotate.prototype.savePdf = function (fileName) {
 	var inst = this;
-	var doc = new jspdf.jsPDF();
+	var format = inst.format || 'a4';
+	var orientation = inst.orientation || "portrait";
+	if (inst.pages.length > 0) {
+		var viewport = inst.pages[0].getViewport({ scale: 1 });
+		format = [viewport.width, viewport.height];
+		orientation = viewport.width > viewport.height ? "landscape" : "portrait";
+	}
+	inst.format = format;
+	inst.orientation = orientation;
+	if (!inst.fabricObjects.length) return;
+	var doc = new jspdf.jsPDF({format, orientation});
 	if (typeof fileName === 'undefined') {
 		fileName = `${new Date().getTime()}.pdf`;
 	}
 
 	inst.fabricObjects.forEach(function (fabricObj, index) {
 		if (index != 0) {
-			doc.addPage();
+			doc.addPage(format, orientation);
 			doc.setPage(index + 1);
 		}
 		doc.addImage(
@@ -278,14 +290,31 @@ PDFAnnotate.prototype.clearActivePage = function () {
 
 PDFAnnotate.prototype.serializePdf = function() {
 	var inst = this;
-	return JSON.stringify(inst.fabricObjects, null, 4);
+	var data = {
+		page_setup: {
+			format: inst.format,
+			orientation: inst.orientation,
+		},
+		pages: inst.fabricObjects,
+	};
+	return JSON.stringify(data, null, 4);
 }
 
 PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
 	var inst = this;
+	var { page_setup, pages } = jsonData;
+	if (typeof pages === 'undefined') {
+		pages = jsonData;
+	}
+	if (typeof page_setup === 'object' && 
+		typeof page_setup.format === 'string' &&
+		typeof page_setup.orientation === 'string') {
+		inst.format = page_setup.format;
+		inst.orientation = page_setup.orientation;
+	}
 	$.each(inst.fabricObjects, function (index, fabricObj) {
-		if (jsonData.length > index) {
-			fabricObj.loadFromJSON(jsonData[index], function () {
+		if (pages.length > index) {
+			fabricObj.loadFromJSON(pages[index], function () {
 				inst.fabricObjectsData[index] = fabricObj.toJSON()
 			})
 		}
