@@ -20,7 +20,8 @@ var PDFAnnotate = function(container_id, url, options = {}) {
     ? options.pageImageCompression.toUpperCase()
     : "NONE";
 	this.textBoxText = 'Sample Text';
-	this.pages = [];
+	this.format;
+	this.orientation;
 	var inst = this;
 
 	var loadingTask = pdfjsLib.getDocument(this.url);
@@ -30,7 +31,16 @@ var PDFAnnotate = function(container_id, url, options = {}) {
 
 	    for (var i = 1; i <= pdf.numPages; i++) {
 	        pdf.getPage(i).then(function (page) {
-				inst.pages.push(page);
+				if (typeof inst.format === 'undefined' ||
+					typeof inst.orientation === 'undefined') {
+					var originalViewport = page.getViewport({ scale: 1 });
+					inst.format = [originalViewport.width, originalViewport.height];
+					inst.orientation =
+					originalViewport.width > originalViewport.height ? 
+						"landscape" : 
+						"portrait";
+				}
+
 	            var viewport = page.getViewport({scale: scale});
 	            var canvas = document.createElement('canvas');
 	            document.getElementById(inst.container_id).appendChild(canvas);
@@ -212,13 +222,6 @@ PDFAnnotate.prototype.savePdf = function (fileName) {
 	var inst = this;
 	var format = inst.format || 'a4';
 	var orientation = inst.orientation || "portrait";
-	if (inst.pages.length > 0) {
-		var viewport = inst.pages[0].getViewport({ scale: 1 });
-		format = [viewport.width, viewport.height];
-		orientation = viewport.width > viewport.height ? "landscape" : "portrait";
-	}
-	inst.format = format;
-	inst.orientation = orientation;
 	if (!inst.fabricObjects.length) return;
 	var doc = new jspdf.jsPDF({format, orientation});
 	if (typeof fileName === 'undefined') {

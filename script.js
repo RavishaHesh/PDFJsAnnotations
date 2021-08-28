@@ -1,9 +1,13 @@
-var pdf = new PDFAnnotate("pdf-container", "pdf.pdf", {
+var pdf = new PDFAnnotate("pdf-container", "sample.pdf", {
   onPageUpdated(page, oldData, newData) {
     console.log(page, oldData, newData);
   },
   ready() {
     console.log("Plugin initialized successfully");
+    // pdf.loadFromJSON({
+    //   page_setup: {...},
+    //   pages: [...]
+    // });
   },
   scale: 1.5,
   pageImageCompression: "MEDIUM", // FAST, MEDIUM, SLOW(Helps to control the new PDF file size)
@@ -61,7 +65,7 @@ function deleteSelectedObject(event) {
 
 function savePDF() {
     // pdf.savePdf();
-    pdf.savePdf('sample.pdf'); // save with given file name
+    pdf.savePdf('output.pdf'); // save with given file name
 }
 
 function clearPage() {
