@@ -57,7 +57,9 @@ pdf.clearActivePage(); // Clear current page
 
 pdf.savePdf(); // Save PDF with name sample.pdf
 
-pdf.serializePdf(); // returns JSON string with canvas data
+pdf.serializePdf(function (serializedString) {
+    //
+}); // returns JSON string with canvas data
 
 pdf.loadFromJSON(serializedJSON) // continue edit with saved JSON. To do this on page load use `ready` option(scripts.js line 5)
 
