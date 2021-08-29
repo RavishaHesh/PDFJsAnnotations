@@ -307,7 +307,7 @@ PDFAnnotate.prototype.serializePdf = function(callback) {
 					},
 					pages: pageAnnotations,
 				};
-				callback(JSON.stringify(data, null, 4));
+				callback(JSON.stringify(data));
 			}
 		});
 	});

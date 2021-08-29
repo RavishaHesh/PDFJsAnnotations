@@ -71,7 +71,9 @@ function clearPage() {
 
 function showPdfData() {
     pdf.serializePdf(function (string) {
-        $('#dataModal .modal-body pre').first().text(string);
+        $("#dataModal .modal-body pre")
+          .first()
+          .text(JSON.stringify(JSON.parse(string), null, 4));
         PR.prettyPrint();
         $('#dataModal').modal('show');
     });
