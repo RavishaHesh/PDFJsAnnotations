@@ -4,10 +4,7 @@ var pdf = new PDFAnnotate("pdf-container", "sample.pdf", {
   },
   ready() {
     console.log("Plugin initialized successfully");
-    // pdf.loadFromJSON({
-    //   page_setup: {...},
-    //   pages: [...]
-    // });
+    pdf.loadFromJSON(sampleOutput);
   },
   scale: 1.5,
   pageImageCompression: "MEDIUM", // FAST, MEDIUM, SLOW(Helps to control the new PDF file size)
@@ -73,10 +70,11 @@ function clearPage() {
 }
 
 function showPdfData() {
-    var string = pdf.serializePdf();
-    $('#dataModal .modal-body pre').first().text(string);
-    PR.prettyPrint();
-    $('#dataModal').modal('show');
+    pdf.serializePdf(function (string) {
+        $('#dataModal .modal-body pre').first().text(string);
+        PR.prettyPrint();
+        $('#dataModal').modal('show');
+    });
 }
 
 $(function () {

@@ -291,16 +291,26 @@ PDFAnnotate.prototype.clearActivePage = function () {
 	}
 }
 
-PDFAnnotate.prototype.serializePdf = function() {
+PDFAnnotate.prototype.serializePdf = function(callback) {
 	var inst = this;
-	var data = {
-		page_setup: {
-			format: inst.format,
-			orientation: inst.orientation,
-		},
-		pages: inst.fabricObjects,
-	};
-	return JSON.stringify(data, null, 4);
+	var pageAnnotations = [];
+	inst.fabricObjects.forEach(function (fabricObject) {
+		fabricObject.clone(function (fabricObjectCopy) {
+			fabricObjectCopy.setBackgroundImage(null);
+			fabricObjectCopy.setBackgroundColor('');
+			pageAnnotations.push(fabricObjectCopy);
+			if (pageAnnotations.length === inst.fabricObjects.length) {
+				var data = {
+					page_setup: {
+						format: inst.format,
+						orientation: inst.orientation,
+					},
+					pages: pageAnnotations,
+				};
+				callback(JSON.stringify(data, null, 4));
+			}
+		});
+	});
 }
 
 PDFAnnotate.prototype.loadFromJSON = function(jsonData) {
