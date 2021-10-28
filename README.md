@@ -45,7 +45,7 @@ pdf.enablePencil(); // Enable pencil tool
 
 pdf.enableAddText(); // Enable add text tool
 
-pdf.enableAddArrow(); // Enable add arrow tool
+pdf.enableAddArrow(); // Enable add arrow tool(Supports optional on draw success callback)
 
 pdf.enableRectangle(); // Adds a rectangle
 
