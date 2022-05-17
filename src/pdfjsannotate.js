@@ -169,4 +169,17 @@ PDFAnnotate.prototype.savePdf = function(fileName) {
   doc.save(fileName);
 };
 
+PDFAnnotate.prototype.enableAddText = function (text) {
+  var inst = this;
+  inst.active_tool = 2;
+  if (typeof text === 'string') {
+    inst.textBoxText = text;
+  }
+  if (inst.fabricObjects.length > 0) {
+    $.each(inst.fabricObjects, function (index, fabricObj) {
+      fabricObj.isDrawingMode = false;
+    });
+  }
+};
+
 module.exports = PDFAnnotate;
