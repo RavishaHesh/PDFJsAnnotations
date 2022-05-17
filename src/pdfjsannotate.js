@@ -6,6 +6,7 @@
 const pdfjsLib = require("pdfjs-dist");
 const fabric = require("fabric").fabric;
 require("./arrow.fabric.js");
+const $ = require("jquery")
 const jsPDF = require("./jspdf.min.js");
 (typeof window !== "undefined"
   ? window

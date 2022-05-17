@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "fabric": "^2.7.0",
+    "jquery": "^3.6.0",
     "pdfjs-dist": "^2.0.943"
   }
 }
