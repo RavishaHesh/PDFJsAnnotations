@@ -182,4 +182,159 @@ PDFAnnotate.prototype.enableAddText = function (text) {
   }
 };
 
+PDFAnnotate.prototype.enableRectangle = function () {
+  var inst = this;
+  var fabricObj = inst.fabricObjects[inst.active_canvas];
+  inst.active_tool = 4;
+  if (inst.fabricObjects.length > 0) {
+    $.each(inst.fabricObjects, function (index, fabricObj) {
+      fabricObj.isDrawingMode = false;
+    });
+  }
+};
+
+PDFAnnotate.prototype.enableAddArrow = function (onDrawnCallback = null) {
+  var inst = this;
+  inst.active_tool = 3;
+  if (inst.fabricObjects.length > 0) {
+    $.each(inst.fabricObjects, function (index, fabricObj) {
+      fabricObj.isDrawingMode = false;
+      new Arrow(fabricObj, inst.color, function () {
+        inst.active_tool = 0;
+        if (typeof onDrawnCallback === 'function') {
+          onDrawnCallback();
+        }
+      });
+    });
+  }
+};
+
+PDFAnnotate.prototype.addImageToCanvas = function () {
+  var inst = this;
+  var fabricObj = inst.fabricObjects[inst.active_canvas];
+
+  if (fabricObj) {
+    var inputElement = document.createElement('input');
+    inputElement.type = 'file';
+    inputElement.accept = '.jpg,.jpeg,.png,.PNG,.JPG,.JPEG';
+    inputElement.onchange = function () {
+      var reader = new FileReader();
+      reader.addEventListener(
+        'load',
+        function () {
+          inputElement.remove();
+          var image = new Image();
+          image.onload = function () {
+            fabricObj.add(new fabric.Image(image));
+          };
+          image.src = this.result;
+        },
+        false
+      );
+      reader.readAsDataURL(inputElement.files[0]);
+    };
+    document.getElementsByTagName('body')[0].appendChild(inputElement);
+    inputElement.click();
+  }
+};
+
+PDFAnnotate.prototype.deleteSelectedObject = function () {
+  var inst = this;
+  var activeObject = inst.fabricObjects[inst.active_canvas].getActiveObject();
+  if (activeObject) {
+    if (confirm('Are you sure ?')) {
+      inst.fabricObjects[inst.active_canvas].remove(activeObject);
+    }
+  }
+};
+PDFAnnotate.prototype.setBrushSize = function (size) {
+  var inst = this;
+  $.each(inst.fabricObjects, function (index, fabricObj) {
+    fabricObj.freeDrawingBrush.width = parseInt(size, 10) || 1;
+  });
+};
+
+PDFAnnotate.prototype.setColor = function (color) {
+  var inst = this;
+  inst.color = color;
+  $.each(inst.fabricObjects, function (index, fabricObj) {
+    fabricObj.freeDrawingBrush.color = color;
+  });
+};
+
+PDFAnnotate.prototype.setBorderColor = function (color) {
+  var inst = this;
+  inst.borderColor = color;
+};
+
+PDFAnnotate.prototype.setFontSize = function (size) {
+  this.font_size = size;
+};
+
+PDFAnnotate.prototype.setBorderSize = function (size) {
+  this.borderSize = size;
+};
+
+PDFAnnotate.prototype.clearActivePage = function () {
+  var inst = this;
+  var fabricObj = inst.fabricObjects[inst.active_canvas];
+  var bg = fabricObj.backgroundImage;
+  if (confirm('Are you sure?')) {
+    fabricObj.clear();
+    fabricObj.setBackgroundImage(bg, fabricObj.renderAll.bind(fabricObj));
+  }
+};
+
+PDFAnnotate.prototype.serializePdf = function (callback) {
+  var inst = this;
+  var pageAnnotations = [];
+  inst.fabricObjects.forEach(function (fabricObject) {
+    fabricObject.clone(function (fabricObjectCopy) {
+      fabricObjectCopy.setBackgroundImage(null);
+      fabricObjectCopy.setBackgroundColor('');
+      pageAnnotations.push(fabricObjectCopy);
+      if (pageAnnotations.length === inst.fabricObjects.length) {
+        var data = {
+          page_setup: {
+            format: inst.format,
+            orientation: inst.orientation,
+          },
+          pages: pageAnnotations,
+        };
+        callback(JSON.stringify(data));
+      }
+    });
+  });
+};
+
+PDFAnnotate.prototype.loadFromJSON = function (jsonData) {
+  var inst = this;
+  var { page_setup, pages } = jsonData;
+  if (typeof pages === 'undefined') {
+    pages = jsonData;
+  }
+  if (
+    typeof page_setup === 'object' &&
+    typeof page_setup.format === 'string' &&
+    typeof page_setup.orientation === 'string'
+  ) {
+    inst.format = page_setup.format;
+    inst.orientation = page_setup.orientation;
+  }
+  $.each(inst.fabricObjects, function (index, fabricObj) {
+    if (pages.length > index) {
+      fabricObj.loadFromJSON(pages[index], function () {
+        inst.fabricObjectsData[index] = fabricObj.toJSON();
+      });
+    }
+  });
+};
+
+PDFAnnotate.prototype.setDefaultTextForTextBox = function (text) {
+  var inst = this;
+  if (typeof text === 'string') {
+    inst.textBoxText = text;
+  }
+};
+
 module.exports = PDFAnnotate;
