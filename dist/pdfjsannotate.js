@@ -74552,7 +74552,7 @@ var PDFAnnotate = window.PDFAnnotate = function (container_id, url) {
               var imageCanvasElement = el;
               imageCanvasElement.id = "page-".concat(index + 1, "-image-canvas");
               var svg = instance.buildTextSvg(viewport, textContent);
-              instance.initFabric(imageCanvasElement, svg);
+              instance.initFabric(imageCanvasElement, svg, index);
             });
           }
         });
@@ -74562,7 +74562,7 @@ var PDFAnnotate = window.PDFAnnotate = function (container_id, url) {
     console.error(reason);
   });
 
-  this.initFabric = function (imageCanvasElement, textSvg) {
+  this.initFabric = function (imageCanvasElement, textSvg, index) {
     var instance = this;
     var background = imageCanvasElement.toDataURL("image/png");
     var fabricObj = new fabric.Canvas(imageCanvasElement.id, {
