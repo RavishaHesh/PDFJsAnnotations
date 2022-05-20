@@ -146,6 +146,15 @@ PDFAnnotate.prototype.enablePencil = function() {
   }
 };
 
+PDFAnnotate.prototype.enableSelector = function () {
+  var inst = this;
+  inst.active_tool = 0;
+  if (inst.fabricObjects.length > 0) {
+    $.each(inst.fabricObjects, function (index, fabricObj) {
+      fabricObj.isDrawingMode = false;
+    });
+  }
+};
 PDFAnnotate.prototype.savePdf = function(fileName) {
   if (typeof fileName == "undefined" || fileName.length == 0)
     fileName = "sample.pdf";
