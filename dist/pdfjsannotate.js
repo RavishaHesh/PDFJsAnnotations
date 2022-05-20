@@ -74640,6 +74640,13 @@ PDFAnnotate.prototype.enableSelector = function () {
 PDFAnnotate.prototype.savePdf = function (fileName) {
   if (typeof fileName == "undefined" || fileName.length == 0) fileName = "sample.pdf";
   var instance = this;
+  instance.save("save", {
+    fileName: fileName
+  });
+};
+
+PDFAnnotate.prototype.save = function (type, options) {
+  var instance = this;
   var doc = new jsPDF();
   $.each(instance.fabricObjects, function (index, fabricObj) {
     fabricObj.backgroundImage = false;
@@ -74652,7 +74659,7 @@ PDFAnnotate.prototype.savePdf = function (fileName) {
     doc.addImage(document.getElementById(fabricObj.lowerCanvasEl.id + "-copy").toDataURL(), "png", 0, 0);
     doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
   });
-  doc.save(fileName);
+  doc.output(type, options);
 };
 
 PDFAnnotate.prototype.enableAddText = function (text) {

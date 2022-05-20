@@ -14,7 +14,7 @@ const jsPDF = require("./jspdf.min.js");
 ).pdfjsWorker = require("./pdfWorker.js");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
+const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
   this.number_of_pages = 0;
   this.pages_rendered = 0;
   this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
@@ -29,12 +29,12 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
 
   const loadingTask = pdfjsLib.getDocument(this.url);
   loadingTask.promise.then(
-    function(pdf) {
+    function (pdf) {
       var scale = 1.3;
       instance.number_of_pages = pdf._pdfInfo.numPages;
 
       for (var i = 1; i <= instance.number_of_pages; i++) {
-        pdf.getPage(i).then(function(page) {
+        pdf.getPage(i).then(function (page) {
           var viewport = page.getViewport(scale);
           var imageCanvas = document.createElement("canvas");
           document
@@ -51,14 +51,14 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
               canvasContext: imageCanvasContext,
               viewport: viewport,
             })
-            .then(function() {
+            .then(function () {
               return page.getTextContent();
             })
-            .then(function(textContent) {
+            .then(function (textContent) {
               instance.pages_rendered++;
 
               if (instance.pages_rendered == instance.number_of_pages) {
-                $(".pdf-image-canvas").each(function(index, el) {
+                $(".pdf-image-canvas").each(function (index, el) {
                   var imageCanvasElement = el;
                   imageCanvasElement.id = `page-${index + 1}-image-canvas`;
                   var svg = instance.buildTextSvg(viewport, textContent);
@@ -69,7 +69,7 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
         });
       }
     },
-    function(reason) {
+    function (reason) {
       console.error(reason);
     }
   );
@@ -88,26 +88,26 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
       background,
       fabricObj.renderAll.bind(fabricObj)
     );
-    $(fabricObj.upperCanvasEl).click(function(event) {
+    $(fabricObj.upperCanvasEl).click(function (event) {
       instance.active_canvas = index;
       instance.fabricClickHandler(event, fabricObj);
     });
     imageCanvasElement.parentNode.prepend(textSvg);
   };
 
-  this.buildTextSvg = function(viewport, textContent) {
+  this.buildTextSvg = function (viewport, textContent) {
     var svg = document.createElementNS(SVG_NS, "svg:svg");
     svg.setAttribute("width", viewport.width + "px");
     svg.setAttribute("height", viewport.height + "px");
     svg.setAttribute("font-size", 1);
 
-    textContent.items.forEach(function(textItem) {
+    textContent.items.forEach(function (textItem) {
       var tx = pdfjsLib.Util.transform(
         pdfjsLib.Util.transform(viewport.transform, textItem.transform),
         [1, 0, 0, -1, 0, 0]
       );
       console.log(textItem, textContent);
-      
+
       var style = textContent.styles[textItem.fontName];
       var text = document.createElementNS(SVG_NS, "svg:text");
       text.setAttribute("transform", "matrix(" + tx.join(" ") + ")");
@@ -118,7 +118,7 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
     return svg;
   };
 
-  this.fabricClickHandler = function(event, fabricObj) {
+  this.fabricClickHandler = function (event, fabricObj) {
     var instance = this;
     if (instance.active_tool == 2) {
       var text = new fabric.IText("Sample text", {
@@ -136,11 +136,11 @@ const PDFAnnotate = (window.PDFAnnotate = function(container_id, url) {
   };
 });
 
-PDFAnnotate.prototype.enablePencil = function() {
+PDFAnnotate.prototype.enablePencil = function () {
   var instance = this;
   instance.active_tool = 1;
   if (instance.fabricObjects.length > 0) {
-    $.each(instance.fabricObjects, function(index, fabricObj) {
+    $.each(instance.fabricObjects, function (index, fabricObj) {
       fabricObj.isDrawingMode = true;
     });
   }
@@ -155,13 +155,18 @@ PDFAnnotate.prototype.enableSelector = function () {
     });
   }
 };
-PDFAnnotate.prototype.savePdf = function(fileName) {
+
+PDFAnnotate.prototype.savePdf = function (fileName) {
   if (typeof fileName == "undefined" || fileName.length == 0)
     fileName = "sample.pdf";
 
   var instance = this;
+  instance.save("save", { fileName })
+}
+PDFAnnotate.prototype.save = function (type, options) {
+  var instance = this;
   var doc = new jsPDF();
-  $.each(instance.fabricObjects, function(index, fabricObj) {
+  $.each(instance.fabricObjects, function (index, fabricObj) {
     fabricObj.backgroundImage = false;
     if (index != 0) {
       doc.addPage();
@@ -175,7 +180,7 @@ PDFAnnotate.prototype.savePdf = function(fileName) {
     );
     doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
   });
-  doc.save(fileName);
+  doc.output(type, options);
 };
 
 PDFAnnotate.prototype.enableAddText = function (text) {
