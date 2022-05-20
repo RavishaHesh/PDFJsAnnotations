@@ -74834,11 +74834,6 @@ PDFAnnotate.prototype.setDefaultTextForTextBox = function (text) {
   }
 };
 
-PDFAnnotate.prototype.output = function (type, options) {
-  var inst = this;
-  return inst.output(type, options);
-};
-
 module.exports = PDFAnnotate;
 
 /***/ }),
