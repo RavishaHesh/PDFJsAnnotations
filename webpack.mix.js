@@ -14,9 +14,4 @@ const webpack = require('webpack');
  */
 
 mix.js('src/pdfjsannotate.js', 'dist/')
-	.styles('src/pdfjsannotate.css', 'dist/pdfjsannotate.css')
-	.webpackConfig({
-		plugins: [
-        	new webpack.IgnorePlugin(/^\.\/pdf.worker.js$/)
-        ]
-	});
+	.styles('src/pdfjsannotate.css', 'dist/pdfjsannotate.css');
