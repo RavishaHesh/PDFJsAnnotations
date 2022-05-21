@@ -35,7 +35,8 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
 
       for (var i = 1; i <= instance.number_of_pages; i++) {
         pdf.getPage(i).then(function (page) {
-          var viewport = page.getViewport(scale);
+          var viewport = page.getViewport({ scale
+});
           var imageCanvas = document.createElement("canvas");
           document
             .getElementById(instance.container_id)
