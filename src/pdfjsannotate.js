@@ -51,6 +51,7 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
               canvasContext: imageCanvasContext,
               viewport: viewport,
             })
+            .promise
             .then(function () {
               return page.getTextContent();
             })
