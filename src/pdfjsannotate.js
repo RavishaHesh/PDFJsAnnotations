@@ -11,7 +11,7 @@ const jsPDF = require("./jspdf.min.js");
 (typeof window !== "undefined"
   ? window
   : {}
-).pdfjsWorker = require("./pdfWorker.js");
+).pdfjsWorker = require("pdfjs-dist/legacy/build/pdf.worker");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
