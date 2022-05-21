@@ -3,7 +3,7 @@
  * Author: Ravisha Heshan
  */
 
-const pdfjsLib = require("pdfjs-dist");
+const pdfjsLib = require("pdfjs-dist/legacy/build/pdf");
 const fabric = require("fabric").fabric;
 require("./arrow.fabric.js");
 const $ = require("jquery")
