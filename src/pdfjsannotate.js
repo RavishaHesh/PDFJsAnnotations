@@ -173,7 +173,7 @@ PDFAnnotate.prototype.save = function (type, options) {
       doc.setPage(index + 1);
     }
     doc.addImage(
-      document.getElementById(fabricObj.lowerCanvasEl.id + "-copy").toDataURL(),
+      document.getElementById(fabricObj.lowerCanvasEl.id).toDataURL(),
       "png",
       0,
       0
