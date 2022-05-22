@@ -182,7 +182,7 @@ PDFAnnotate.prototype.save = function (type, options) {
     );
     doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
   });
-  doc.output(type, options);
+ return doc.output(type, options);
 };
 
 PDFAnnotate.prototype.enableAddText = function (text) {
