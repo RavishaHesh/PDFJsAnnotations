@@ -14,7 +14,7 @@ const jsPDF = require("./jspdf.min.js");
 ).pdfjsWorker = require("pdfjs-dist/legacy/build/pdf.worker");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
-const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
+const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
   this.number_of_pages = 0;
   this.pages_rendered = 0;
   this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
@@ -25,8 +25,11 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
   this.active_canvas = 0;
   this.container_id = container_id;
   this.url = url;
+  this.opts = opts
   const instance = this;
 
+  this.opts.Loaded = this.opts.Loaded||(()=>{});
+  this.opts.Error = this.opts.Error || ((reason) => { console.error(reason) });
   const loadingTask = pdfjsLib.getDocument(this.url);
   loadingTask.promise.then(
     function (pdf) {
@@ -65,6 +68,7 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
                   imageCanvasElement.id = `page-${index + 1}-image-canvas`;
                   var svg = instance.buildTextSvg(viewport, textContent);
                   instance.initFabric(imageCanvasElement, svg, index);
+                  opts.Loaded();
                 });
               }
             });
@@ -72,7 +76,7 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url) {
       }
     },
     function (reason) {
-      console.error(reason);
+      opts.Error(reason);
     }
   );
 
