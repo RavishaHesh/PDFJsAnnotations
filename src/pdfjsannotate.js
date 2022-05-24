@@ -89,6 +89,7 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
         width: 1,
         color: instance.color,
       },
+      enableRetinaScaling: false 
     });
     instance.fabricObjects.push(fabricObj);
     fabricObj.setBackgroundImage(
