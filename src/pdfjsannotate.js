@@ -14,6 +14,7 @@ const jsPDF = require("./jspdf.min.js");
 ).pdfjsWorker = require("pdfjs-dist/legacy/build/pdf.worker");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
+// Event List
 const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
   this.number_of_pages = 0;
   this.pages_rendered = 0;
@@ -184,7 +185,13 @@ PDFAnnotate.prototype.save = function (type, options) {
       0,
       0
     );
-    doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
+    doc.addImage(fabricObj.toDataURL({
+      format: 'png'
+    }), inst.pageImageCompression == "NONE" ? "PNG" : "JPEG", 0, 0, doc.internal.pageSize.getWidth(),
+      doc.internal.pageSize.getHeight(), `page-${index + 1}`,
+      ["FAST", "MEDIUM", "SLOW"].indexOf(inst.pageImageCompression) >= 0
+        ? inst.pageImageCompression
+        : undefined);
   });
  return doc.output(type, options);
 };
