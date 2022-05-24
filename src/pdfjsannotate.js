@@ -187,10 +187,10 @@ PDFAnnotate.prototype.save = function (type, options) {
     );
     doc.addImage(fabricObj.toDataURL({
       format: 'png'
-    }), inst.pageImageCompression == "NONE" ? "PNG" : "JPEG", 0, 0, doc.internal.pageSize.getWidth(),
+    }), instance.opts.pageImageCompression == "NONE" ? "PNG" : "JPEG", 0, 0, doc.internal.pageSize.getWidth(),
       doc.internal.pageSize.getHeight(), `page-${index + 1}`,
-      ["FAST", "MEDIUM", "SLOW"].indexOf(inst.pageImageCompression) >= 0
-        ? inst.pageImageCompression
+      ["FAST", "MEDIUM", "SLOW"].indexOf(instance.opts.pageImageCompression) >= 0
+        ? instance.opts.pageImageCompression
         : undefined);
   });
  return doc.output(type, options);
