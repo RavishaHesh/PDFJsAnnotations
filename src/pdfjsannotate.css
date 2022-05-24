@@ -4,7 +4,7 @@
  */
 .canvas-container {
 	margin-bottom: 10px;
-	width: 100% !important;
+	width: 100%;
 }
 
 .pdf-image-canvas {
