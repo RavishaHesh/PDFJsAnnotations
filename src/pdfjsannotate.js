@@ -15,33 +15,33 @@ const jsPDF = require("./jspdf.min.js");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 // Event List
-const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, opts) {
+const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, options) {
   this.number_of_pages = 0;
   this.pages_rendered = 0;
   this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
   this.fabricObjects = [];
+  this.fabricObjectsData = [];
   this.textContents = [];
   this.color = "#212121";
   this.font_size = 16;
   this.active_canvas = 0;
   this.container_id = container_id;
   this.url = url;
-  this.opts = opts
+  this.options = options
   this.format;
   this.orientation;
   const instance = this;
-  
 
-  this.opts.Loaded = this.opts.Loaded || (() => { });
-  this.opts.Error = this.opts.Error || ((reason) => { console.error(reason) });
+
+  this.options.Loaded = this.options.Loaded || (() => { });
+  this.options.Error = this.options.Error || ((reason) => { console.error(reason) });
   const loadingTask = pdfjsLib.getDocument(this.url);
   loadingTask.promise.then(
     function (pdf) {
       var scale = 1.3;
       instance.number_of_pages = pdf._pdfInfo.numPages;
-      let promiseList = [];
       for (var i = 1; i <= instance.number_of_pages; i++) {
-        promiseList.push(pdf.getPage(i).then(function (page) {
+        pdf.getPage(i).then(function (page) {
 
           if (typeof instance.format === 'undefined' ||
             typeof instance.orientation === 'undefined') {
@@ -70,10 +70,10 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, opts) {
               viewport: viewport,
             })
             .promise
+            // .then(function () {
+            //   return page.getTextContent();
+            // })
             .then(function () {
-              return page.getTextContent();
-            })
-            .then(function (textContent) {
               instance.pages_rendered++;
 
               if (instance.pages_rendered == instance.number_of_pages) {
@@ -85,62 +85,96 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, opts) {
                 });
               }
             });
-        }));
+        });
       }
-      Promise.all(promiseList).then(opts.Loaded);
+
     },
     function (reason) {
-      opts.Error(reason);
+      options.Error(reason);
     }
   );
 
-  this.initFabric = function (imageCanvasElement, textSvg, index) {
+  this.initFabric = function (
+    // imageCanvasElement, textSvg, index
+  ) {
     var instance = this;
-    var background = imageCanvasElement.toDataURL("image/png");
-    var fabricObj = new fabric.Canvas(imageCanvasElement.id, {
-      freeDrawingBrush: {
-        width: 1,
-        color: instance.color,
-      },
-      enableRetinaScaling: false
-    });
-    instance.fabricObjects.push(fabricObj);
-    fabricObj.setBackgroundImage(
-      background,
-      fabricObj.renderAll.bind(fabricObj)
-    );
-    $(fabricObj.upperCanvasEl).click(function (event) {
-      instance.active_canvas = index;
-      instance.fabricClickHandler(event, fabricObj);
-    });
-    imageCanvasElement.parentNode.prepend(textSvg);
-  };
+    // var background = imageCanvasElement.toDataURL("image/png");
+    // var fabricObj = new fabric.Canvas(imageCanvasElement.id, {
+    //   freeDrawingBrush: {
+    //     width: 1,
+    //     color: instance.color,
+    //   },
+    //   enableRetinaScaling: false
+    // });
 
-  this.buildTextSvg = function (viewport, textContent) {
-    var svg = document.createElementNS(SVG_NS, "svg:svg");
-    svg.setAttribute("width", viewport.width + "px");
-    svg.setAttribute("height", viewport.height + "px");
-    svg.setAttribute("font-size", 1);
+    let canvases = $('#' + inst.container_id + ' canvas');
+    canvases.each(function (index, el) {
+      var background = el.toDataURL('image/png');
+      var fabricObj = new fabric.Canvas(el.id, {
+        freeDrawingBrush: {
+          width: 1,
+          color: inst.color,
+        },
+      });
 
-    textContent.items.forEach(function (textItem) {
-      var tx = pdfjsLib.Util.transform(
-        pdfjsLib.Util.transform(viewport.transform, textItem.transform),
-        [1, 0, 0, -1, 0, 0]
+      instance.fabricObjects.push(fabricObj);
+
+      if (typeof options.onPageUpdated == 'function') {
+        fabricObj.on('object:added', function () {
+          var oldValue = Object.assign({}, instance.fabricObjectsData[index]);
+          instance.fabricObjectsData[index] = fabricObj.toJSON();
+          options.onPageUpdated(
+            index + 1,
+            oldValue,
+            instance.fabricObjectsData[index]
+          );
+        });
+      }
+      fabricObj.setBackgroundImage(
+        background,
+        fabricObj.renderAll.bind(fabricObj)
       );
-      console.log(textItem, textContent);
-
-      var style = textContent.styles[textItem.fontName];
-      var text = document.createElementNS(SVG_NS, "svg:text");
-      text.setAttribute("transform", "matrix(" + tx.join(" ") + ")");
-      text.setAttribute("font-family", style.fontFamily);
-      text.textContent = textItem.str;
-      svg.appendChild(text);
+      $(fabricObj.upperCanvasEl).click(function (event) {
+        instance.active_canvas = index;
+        instance.fabricClickHandler(event, fabricObj);
+      });
+      fabricObj.on('after:render', function () {
+        instance.fabricObjectsData[index] = fabricObj.toJSON();
+        fabricObj.off('after:render');
+      });
+      if (index === canvases.length - 1 && typeof options.ready === 'function') {
+        options.ready();
+      }
     });
-    return svg;
+    // imageCanvasElement.parentNode.prepend(textSvg);
   };
+
+  // this.buildTextSvg = function (viewport, textContent) {
+  //   var svg = document.createElementNS(SVG_NS, "svg:svg");
+  //   svg.setAttribute("width", viewport.width + "px");
+  //   svg.setAttribute("height", viewport.height + "px");
+  //   svg.setAttribute("font-size", 1);
+
+  //   textContent.items.forEach(function (textItem) {
+  //     var tx = pdfjsLib.Util.transform(
+  //       pdfjsLib.Util.transform(viewport.transform, textItem.transform),
+  //       [1, 0, 0, -1, 0, 0]
+  //     );
+  //     console.log(textItem, textContent);
+
+  //     var style = textContent.styles[textItem.fontName];
+  //     var text = document.createElementNS(SVG_NS, "svg:text");
+  //     text.setAttribute("transform", "matrix(" + tx.join(" ") + ")");
+  //     text.setAttribute("font-family", style.fontFamily);
+  //     text.textContent = textItem.str;
+  //     svg.appendChild(text);
+  //   });
+  //   return svg;
+  // };
 
   this.fabricClickHandler = function (event, fabricObj) {
     var instance = this;
+    var toolObj;
     if (instance.active_tool == 2) {
       var text = new fabric.IText("Sample text", {
         left:
@@ -153,6 +187,20 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, opts) {
       });
       fabricObj.add(text);
       instance.active_tool = 0;
+    }
+    else if (inst.active_tool == 4) {
+      toolObj = new fabric.Rect({
+        left: event.clientX - fabricObj.upperCanvasEl.getBoundingClientRect().left,
+        top: event.clientY - fabricObj.upperCanvasEl.getBoundingClientRect().top,
+        width: 100,
+        height: 100,
+        fill: inst.color,
+        stroke: inst.borderColor,
+        strokeSize: inst.borderSize,
+      });
+    }
+    if (toolObj) {
+      fabricObj.add(toolObj);
     }
   };
 });
