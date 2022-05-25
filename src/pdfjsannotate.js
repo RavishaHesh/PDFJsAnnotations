@@ -15,7 +15,7 @@ const jsPDF = require("./jspdf.min.js");
 const SVG_NS = "http://www.w3.org/2000/svg";
 
 // Event List
-const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
+const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, opts) {
   this.number_of_pages = 0;
   this.pages_rendered = 0;
   this.active_tool = 1; // 1 - Free hand, 2 - Text, 3 - Arrow
@@ -29,18 +29,17 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
   this.opts = opts
   const instance = this;
 
-  this.opts.Loaded = this.opts.Loaded||(()=>{});
+  this.opts.Loaded = this.opts.Loaded || (() => { });
   this.opts.Error = this.opts.Error || ((reason) => { console.error(reason) });
   const loadingTask = pdfjsLib.getDocument(this.url);
   loadingTask.promise.then(
     function (pdf) {
       var scale = 1.3;
       instance.number_of_pages = pdf._pdfInfo.numPages;
-
+      let promiseList = [];
       for (var i = 1; i <= instance.number_of_pages; i++) {
-        pdf.getPage(i).then(function (page) {
-          var viewport = page.getViewport({ scale
-});
+        promiseList.push(pdf.getPage(i).then(function (page) {
+          var viewport = page.getViewport({ scale });
           var imageCanvas = document.createElement("canvas");
           document
             .getElementById(instance.container_id)
@@ -69,12 +68,12 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
                   imageCanvasElement.id = `page-${index + 1}-image-canvas`;
                   var svg = instance.buildTextSvg(viewport, textContent);
                   instance.initFabric(imageCanvasElement, svg, index);
-                  opts.Loaded();
                 });
               }
             });
-        });
+        }));
       }
+      Promise.all(promiseList).then(opts.Loaded);
     },
     function (reason) {
       opts.Error(reason);
@@ -89,7 +88,7 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url,opts) {
         width: 1,
         color: instance.color,
       },
-      enableRetinaScaling: false 
+      enableRetinaScaling: false
     });
     instance.fabricObjects.push(fabricObj);
     fabricObj.setBackgroundImage(
@@ -188,7 +187,7 @@ PDFAnnotate.prototype.save = function (type, options) {
     );
     doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
   });
- return doc.output(type, options);
+  return doc.output(type, options);
 };
 
 PDFAnnotate.prototype.enableAddText = function (text) {
