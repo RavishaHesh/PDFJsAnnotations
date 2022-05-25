@@ -80,9 +80,9 @@ const PDFAnnotate = (window.PDFAnnotate = function (container_id, url, options) 
                 $(".pdf-image-canvas").each(function (index, el) {
                   var imageCanvasElement = el;
                   imageCanvasElement.id = `page-${index + 1}-image-canvas`;
-                  var svg = instance.buildTextSvg(viewport, textContent);
-                  instance.initFabric(imageCanvasElement, svg, index);
+                  // var svg = instance.buildTextSvg(viewport, textContent);
                 });
+                instance.initFabric();
               }
             });
         });
