@@ -186,13 +186,7 @@ PDFAnnotate.prototype.save = function (type, options) {
       0,
       0
     );
-    doc.addImage(fabricObj.toDataURL({
-      format: 'png'
-    }), instance.opts.pageImageCompression == "NONE" ? "PNG" : "JPEG", 0, 0, doc.internal.pageSize.getWidth(),
-      doc.internal.pageSize.getHeight(), `page-${index + 1}`,
-      ["FAST", "MEDIUM", "SLOW"].indexOf(instance.opts.pageImageCompression) >= 0
-        ? instance.opts.pageImageCompression
-        : undefined);
+    doc.addImage(fabricObj.toDataURL(), "png", 0, 0);
   });
  return doc.output(type, options);
 };
