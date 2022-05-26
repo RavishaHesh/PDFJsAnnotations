@@ -20,8 +20,9 @@
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
-    "fabric": "^2.7.0",
+    "fabric": "^4.4.0",
     "jquery": "^3.6.0",
+    "jspdf": "^2.5.1",
     "pdfjs-dist": "2.12.313"
   }
 }
